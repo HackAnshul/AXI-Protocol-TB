@@ -1,12 +1,13 @@
-TESTNAME=''
+TESTNAME='axi_base_test'
+INCDIR=+incdir+../ENV/axi_slave +incdir+../ENV/axi_master +incdir+../ENV/axi_slave/slv_agnt +incdir+../ENV/axi_master/mas_agnt  +incdir+../ENV +incdir+../TEST
+PKG=../ENV/axi_slave/slv_agnt/axi_slv_agt_pkg.sv ../ENV/axi_master/mas_agnt/axi_mas_agt_pkg.sv ../ENV/axi_slave/axi_slv_pkg.sv ../ENV/axi_master/axi_mas_pkg.sv ../ENV/axi_env_pkg.sv ../TEST/axi_test_pkg.sv
+TOP_MOD=axi_tb_top
+TOP=../TOP/axi_tb_top.sv
 
 vlog:
-	vlog +incdir+../ENV +incdir+../TEST +incdir+../ENV/w_agent +incdir+../ENV/r_agent ../RTL/ram_16x8.sv ../TEST/ram_test_pkg.sv ../TOP/ram_tb_top.sv  
-
-vlog_pkg:
-	vlog +incdir+../ENV +incdir+../TEST +incdir+../ENV/w_agent +incdir+../ENV/r_agent ../RTL/ram_16x8.sv ../ENV/w_agent/ram_wagent_pkg.sv ../ENV/r_agent/ram_ragent_pkg.sv ../ENV/ram_env_pkg.sv ../TEST/ram_test_pkg.sv ../TOP/ram_tb_top.sv  
+	vlog $(RTL) $(PKG) $(TOP) $(INCDIR)
 
 sim_cmd:
-	vsim -voptargs=+acc ram_tb_top -c -do "run -all;exit" +UVM_TESTNAME=$(TESTNAME)
+	vsim -voptargs=+acc $(TOP_MOD) -c -do "run -all;exit" +UVM_TESTNAME=$(TESTNAME)
 sim_gui:
-	vsim -voptargs=+acc ram_tb_top 
+	vsim -voptargs=+acc $(TOP_MOD)

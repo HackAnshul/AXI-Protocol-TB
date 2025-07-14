@@ -6,31 +6,31 @@ interface axi_slv_inf (input aclk);
   logic aresetn;
 
   //write address channel signals
-  logic [3:0]awid;                  //write address id
-  logic [`SV_ADDR_WIDTH-1:0]awaddr; //write address
-  logic [7:0]awlen;                 //write burst length
-  logic [2:0]awsize;                //write burst size
-  logic [1:0]awburst;               //write burst type
-  logic awvalid;                    //write address valid
-  logic awready;                    //write address ready
+  logic [`ID_X_WIDTH-1:0]awid;   //write address id
+  logic [`ADDR_WIDTH-1:0]awaddr; //write address
+  logic [7:0]awlen;              //write burst length
+  logic [2:0]awsize;             //write burst size
+  logic [1:0]awburst;            //write burst type
+  logic awvalid;                 //write address valid
+  logic awready;                 //write address ready
 
   //write data channel signals
-  logic [3:0]wid;                   //write data id
-  logic [`SV_DATA_WIDTH-1:0]wdata;  //write data
-  logic [`SV_DATA_WIDTH/8:0]wstrb;  //write strobes
+  logic [`ID_X_WIDTH-1:0]wid;                   //write data id
+  logic [`DATA_WIDTH-1:0]wdata;  //write data
+  logic [`DATA_WIDTH/8:0]wstrb;  //write strobes
   logic wlast;                      //write last
   logic wvalid;                     //write data valid
   logic wready;                     //write data ready
 
   //write response channel signals
-  logic [3:0]bid;                   //write response id
+  logic [`ID_X_WIDTH-1:0]bid;                   //write response id
   logic [1:0]bresp;                 //write response
   logic bvalid;                     //write response valid
   logic bready;                     //write response ready
 
   //read address channel signals
-  logic [3:0]arid;                  //read address id
-  logic [`SV_ADDR_WIDTH-1:0]araddr; //read address
+  logic [`ID_X_WIDTH-1:0]arid;                  //read address id
+  logic [`ADDR_WIDTH-1:0]araddr; //read address
   logic [7:0]arlen;                 //read burst length
   logic [2:0]arsize;                //read burst size
   logic [1:0]arburst;               //read burst type
@@ -38,8 +38,8 @@ interface axi_slv_inf (input aclk);
   logic arready;                    //read address ready
 
   //read data channel signals
-  logic [3:0]rid;                   //read data id
-  logic [`SV_DATA_WIDTH-1:0]rdata;  //read data
+  logic [`ID_X_WIDTH-1:0]rid;                   //read data id
+  logic [`DATA_WIDTH-1:0]rdata;  //read data
   logic [1:0]rresp;                 //read response
   logic rlast;                      //read last
   logic rvalid;                     //read valid

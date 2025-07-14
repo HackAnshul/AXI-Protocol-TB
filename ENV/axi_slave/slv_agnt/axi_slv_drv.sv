@@ -8,8 +8,8 @@ class axi_slv_drv extends uvm_driver #(axi_slv_seq_item);
   //factory registration
   `uvm_component_utils(axi_slv_drv)
 
-  seq_item addr_que [$];
-  seq_item data_que [$];
+  axi_slv_seq_item addr_que [$];
+  axi_slv_seq_item data_que [$];
 
   //virtual interface
   virtual axi_inf vif;

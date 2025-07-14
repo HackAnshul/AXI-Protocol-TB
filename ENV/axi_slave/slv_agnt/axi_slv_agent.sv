@@ -13,7 +13,7 @@ class axi_slv_agent extends uvm_agent;
   axi_slv_mon  slv_mon;
   axi_slv_seqr slv_seqr;
 
-  axi_env_config env_cfg;
+  axi_slv_config slv_cfg;
 
   //constructor
   function new(string name = "axi_slv_agent", uvm_component parent);
@@ -38,7 +38,7 @@ class axi_slv_agent extends uvm_agent;
   //connect_phase
   function void connect_phase(uvm_phase phase);
    // if (env_cfg.is_active_wagt == UVM_ACTIVE) begin
-      w_driver.seq_item_port.connect(w_sequencer.seq_item_export);
+      //slv_drv.seq_item_port.connect(slv_seqr.seq_item_export);
     //end
   endfunction
 

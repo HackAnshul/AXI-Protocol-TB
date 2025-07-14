@@ -8,8 +8,8 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
   //factory registration
   `uvm_component_utils(axi_mas_drv)
 
-  seq_item addr_que [$];
-  seq_item data_que [$];
+  axi_mas_seq_item addr_que [$];
+  axi_mas_seq_item data_que [$];
 
   //virtual interface
   virtual axi_inf vif;

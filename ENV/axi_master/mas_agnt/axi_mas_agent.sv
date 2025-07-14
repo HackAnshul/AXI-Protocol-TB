@@ -13,7 +13,7 @@ class axi_mas_agent extends uvm_agent;
   axi_mas_mon  mas_mon;
   axi_mas_seqr mas_seqr;
 
-  axi_env_config env_cfg;
+  axi_mas_config mas_cfg;
 
   //constructor
   function new(string name = "axi_mas_agent", uvm_component parent);
@@ -38,7 +38,7 @@ class axi_mas_agent extends uvm_agent;
   //connect_phase
   function void connect_phase(uvm_phase phase);
    // if (env_cfg.is_active_wagt == UVM_ACTIVE) begin
-      w_driver.seq_item_port.connect(w_sequencer.seq_item_export);
+      //mas_drv.seq_item_port.connect(mas_seqr.seq_item_export);
     //end
   endfunction
 

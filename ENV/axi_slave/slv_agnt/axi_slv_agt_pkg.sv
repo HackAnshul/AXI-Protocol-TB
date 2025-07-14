@@ -1,9 +1,10 @@
 package axi_slv_agt_pkg;
-  
+
   import uvm_pkg::*;
   `include "uvm_macros.svh"
-  `include "axi_defines.sv"
-  `include "axi_env_config.svh"
+
+  `include "axi_defines.svh"
+  `include "axi_slv_config.svh"
   `include "axi_slv_seq_item.sv"
   `include "axi_slv_seqr.sv"
   `include "axi_slv_drv.sv"
