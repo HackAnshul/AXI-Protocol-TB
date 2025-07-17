@@ -1,9 +1,7 @@
 `ifndef AXI_SLV_INF_SV
 `define AXI_SLV_INF_SV
 
-interface axi_slv_inf (input aclk);
-
-  logic aresetn;
+interface axi_slv_inf (input aclk, aresetn);
 
   //write address channel signals
   logic [`ID_X_WIDTH-1:0]awid;   //write address id
@@ -15,57 +13,57 @@ interface axi_slv_inf (input aclk);
   logic awready;                 //write address ready
 
   //write data channel signals
-  logic [`ID_X_WIDTH-1:0]wid;                   //write data id
+  logic [`ID_X_WIDTH-1:0]wid;    //write data id
   logic [`DATA_WIDTH-1:0]wdata;  //write data
   logic [`DATA_WIDTH/8:0]wstrb;  //write strobes
-  logic wlast;                      //write last
-  logic wvalid;                     //write data valid
-  logic wready;                     //write data ready
+  logic wlast;                   //write last
+  logic wvalid;                  //write data valid
+  logic wready;                  //write data ready
 
   //write response channel signals
-  logic [`ID_X_WIDTH-1:0]bid;                   //write response id
-  logic [1:0]bresp;                 //write response
-  logic bvalid;                     //write response valid
-  logic bready;                     //write response ready
+  logic [`ID_X_WIDTH-1:0]bid;    //write response id
+  logic [1:0]bresp;              //write response
+  logic bvalid;                  //write response valid
+  logic bready;                  //write response ready
 
   //read address channel signals
-  logic [`ID_X_WIDTH-1:0]arid;                  //read address id
+  logic [`ID_X_WIDTH-1:0]arid;   //read address id
   logic [`ADDR_WIDTH-1:0]araddr; //read address
-  logic [7:0]arlen;                 //read burst length
-  logic [2:0]arsize;                //read burst size
-  logic [1:0]arburst;               //read burst type
-  logic arvalid;                    //read address valid
-  logic arready;                    //read address ready
+  logic [7:0]arlen;              //read burst length
+  logic [2:0]arsize;             //read burst size
+  logic [1:0]arburst;            //read burst type
+  logic arvalid;                 //read address valid
+  logic arready;                 //read address ready
 
   //read data channel signals
-  logic [`ID_X_WIDTH-1:0]rid;                   //read data id
+  logic [`ID_X_WIDTH-1:0]rid;    //read data id
   logic [`DATA_WIDTH-1:0]rdata;  //read data
-  logic [1:0]rresp;                 //read response
-  logic rlast;                      //read last
-  logic rvalid;                     //read valid
-  logic rready;                     //read ready
+  logic [1:0]rresp;              //read response
+  logic rlast;                   //read last
+  logic rvalid;                  //read valid
+  logic rready;                  //read ready
 
   //clocking block for slave driver
-  clocking slv_drv_cb @(posedge aclk);
+  clocking slv_drv_cb @(posedge aclk or negedge aresetn);
     default input #1 output #1;
 
-    input aresetn, awready, wready, bid, bresp, bvalid, arready, rid, rdata, rresp, rlast, rvalid;
+    input awready, wready, bid, bresp, bvalid, arready, rid, rdata, rresp, rlast, rvalid;
 
     output awid, awaddr, awlen, awsize, awburst, awvalid, wid, wdata, wstrb, wlast, wvalid,bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
 
   endclocking
 
   //clocking block for slave monitor
-  clocking slv_mon_cb @(posedge aclk);
+  clocking slv_mon_cb @(posedge aclk or negedge aresetn);
     default input #1 output #1;
 
-    input aresetn, awid, awaddr, awlen, awsize, awburst, awvalid, wid, wdata, wstrb, wlast, wvalid,bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
+    input awid, awaddr, awlen, awsize, awburst, awvalid, wid, wdata, wstrb, wlast, wvalid,bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
     input awready, wready, bid, bresp, bvalid, arready, rid, rdata, rresp, rlast, rvalid;
 
   endclocking
 
-  modport SLV_DRV_MP (clocking slv_drv_cb, input aclk);
-  modport SLV_MON_MP (clocking slv_mon_cb, input aclk);
+  modport SLV_DRV_MP (clocking slv_drv_cb, input aclk, input aresetn);
+  modport SLV_MON_MP (clocking slv_mon_cb, input aclk, input aresetn);
 
 endinterface
 
