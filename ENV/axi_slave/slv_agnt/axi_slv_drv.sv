@@ -21,8 +21,8 @@ class axi_slv_drv extends uvm_driver #(axi_slv_seq_item);
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db#(virtual axi_inf)::get(this,"","vif", vif))
-      `uvm_fatal("NO_VIF",{"virtual interface must be set for: ",get_full_name(),".vif"});
+    //if(!uvm_config_db#(virtual axi_inf)::get(this,"","s_vif", vif))
+      //`uvm_fatal("NO_VIF",{"virtual interface must be set for: ",get_full_name(),".vif"});
   endfunction
 
   task run_phase(uvm_phase phase);

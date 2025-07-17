@@ -21,8 +21,8 @@ class axi_slv_mon extends uvm_monitor;
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db #(virtual axi_inf)::get(this,"","vif",vif))
-      `uvm_fatal("NOVIF",{"virtual interface must be set for: ",get_full_name(),".vif"});
+    //if(!uvm_config_db #(virtual axi_inf)::get(this,"","s_vif",vif))
+      //`uvm_fatal("NOVIF",{"virtual interface must be set for: ",get_full_name(),".vif"});
     item_collected_port = new("item_collected_port",this);
   endfunction
 

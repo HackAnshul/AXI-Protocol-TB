@@ -7,7 +7,7 @@ class axi_base_virt_seqs extends uvm_sequence #(uvm_sequence_item);
   //axi_mas_seqr wseqr_h;
   //axi_slv_seqr rseqr_h;
 
-  `uvm_object_utils_begin(axi_virt_seqr)
+  `uvm_object_utils_begin(axi_base_virt_seqs)
   `uvm_object_utils_end
 
   function new(string name="axi_base_virt_seqs");

@@ -25,6 +25,10 @@ class axi_base_test extends uvm_test;
     env_h = axi_env::type_id::create("env_h",this);
   endfunction
 
+  function void end_of_elaboration_phase(uvm_phase phase);
+    uvm_top.print_topology();
+  endfunction
+
   //run_phase
   task run_phase(uvm_phase phase);
     phase.raise_objection(this);
