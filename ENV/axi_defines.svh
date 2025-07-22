@@ -1,5 +1,4 @@
 //HEADER
-//Gaurd Statment to avoid multiple compilation of a file
 `ifndef AXI_DEFINES_SV
 `define AXI_DEFINES_SV
 
@@ -9,4 +8,3 @@
 `define ID_X_WIDTH 8
 
 `endif
-

@@ -12,17 +12,34 @@ class axi_base_test extends uvm_test;
 
   //config class
   axi_env_config env_cfg;
+  axi_mas_config mas_cfg;
+  axi_slv_config slv_cfg;
 
   //constructor
   function new(string name = "axi_base_test", uvm_component parent);
     super.new(name,parent);
-    env_cfg = axi_env_config::type_id::create("env_cfg");
   endfunction
 
   //build_phase
   function void build_phase(uvm_phase phase);
-    uvm_config_db #(axi_env_config)::set(this,"*","env_cfg",env_cfg);
+    env_cfg = axi_env_config::type_id::create("env_cfg");
+    mas_cfg = axi_mas_config::type_id::create("mas_cfg");
+    slv_cfg = axi_slv_config::type_id::create("slv_cfg");
+
+    super.build_phase(phase);
+    if(!uvm_config_db#(virtual axi_mas_inf)::get(this,"","m_vif", mas_cfg.vif))
+      `uvm_fatal("NO_VIF",{"virtual interface must be set for:",get_full_name()});
+
+    if(!uvm_config_db#(virtual axi_slv_inf)::get(this,"","s_vif", slv_cfg.vif))
+      `uvm_fatal("NO_VIF",{"virtual interface must be set for:",get_full_name()});
+
+    env_cfg.mas_cfg = mas_cfg;
+    env_cfg.slv_cfg = slv_cfg;
+
+    uvm_config_db #(axi_env_config)::set(null,"*","env_cfg",env_cfg);
+
     env_h = axi_env::type_id::create("env_h",this);
+
   endfunction
 
   function void end_of_elaboration_phase(uvm_phase phase);

@@ -12,7 +12,7 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
   axi_mas_seq_item data_que [$];
 
   //virtual interface
-  virtual axi_inf vif;
+  virtual axi_mas_inf vif;
 
   //constructor
   function new(string name = "axi_mas_drv", uvm_component parent);

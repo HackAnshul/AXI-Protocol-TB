@@ -8,7 +8,7 @@ class axi_slv_mon extends uvm_monitor;
   //factory registration
   `uvm_component_utils(axi_slv_mon);
 
-  virtual axi_inf vif;
+  virtual axi_slv_inf vif;
 
   uvm_analysis_port #(axi_slv_seq_item) item_collected_port;
 

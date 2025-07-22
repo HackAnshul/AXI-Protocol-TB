@@ -12,7 +12,7 @@ class axi_slv_drv extends uvm_driver #(axi_slv_seq_item);
   axi_slv_seq_item data_que [$];
 
   //virtual interface
-  virtual axi_inf vif;
+  virtual axi_slv_inf vif;
 
   //constructor
   function new(string name = "axi_slv_drv", uvm_component parent);

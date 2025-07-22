@@ -10,10 +10,11 @@ package axi_env_pkg;
   import axi_slv_pkg::*;
 
 
-`include "axi_defines.svh"
+  `include "axi_defines.svh"
   `include "axi_virt_seqr.sv"
   `include "axi_base_virt_seqs.sv"
 
+  `include "axi_env_config.svh"
   `include "axi_scb.sv"
   `include "axi_env.sv"
 

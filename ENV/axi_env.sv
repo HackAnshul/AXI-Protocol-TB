@@ -7,6 +7,9 @@ class axi_env extends uvm_env;
   //factory registration
   `uvm_component_utils(axi_env)
 
+  // environment config class (values set from base test)
+  axi_env_config env_cfg;
+
   //declare agents and scoreboard
   axi_mas_agent mas_agent;
   axi_slv_agent slv_agent;
@@ -22,9 +25,25 @@ class axi_env extends uvm_env;
   //build_phase
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    mas_agent = axi_mas_agent::type_id::create("mas_agent",this);
-    slv_agent = axi_slv_agent::type_id::create("slv_agent",this);
-    scb = axi_scb::type_id::create("scb",this);
+
+    env_cfg = axi_env_config::type_id::create("env_cfg");
+    if ( ! uvm_config_db #(axi_env_config)::get(null,"*","env_cfg",env_cfg) )
+      `uvm_fatal("NO_ENV",{"environment config not found ",get_full_name()});
+
+    if (env_cfg.has_mas_agt) begin
+      uvm_config_db#( axi_mas_config )::set(this,"mas_agent*","mas_cfg",env_cfg.mas_cfg);
+      mas_agent = axi_mas_agent::type_id::create("mas_agent",this);
+    end
+
+    if (env_cfg.has_slv_agt) begin
+      uvm_config_db#( axi_slv_config )::set(this,"slv_agent*","slv_cfg",env_cfg.slv_cfg);
+      slv_agent = axi_slv_agent::type_id::create("slv_agent",this);
+    end
+
+    if (env_cfg.has_scb) begin
+      scb = axi_scb::type_id::create("scb",this);
+    end
+
     vseqr_h = axi_virt_seqr::type_id::create("vseqr_h",this);
   endfunction
 

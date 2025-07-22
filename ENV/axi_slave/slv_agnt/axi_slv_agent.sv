@@ -14,6 +14,10 @@ class axi_slv_agent extends uvm_agent;
   axi_slv_mon  slv_mon;
   axi_slv_seqr slv_seqr;
 
+  // analysis port (to be assigned to monitor's analysis port)
+  uvm_analysis_port#( axi_slv_seq_item ) mas_ap;
+
+  // master slave config (set from env, contains vif set from base test)
   axi_slv_config slv_cfg;
 
   //constructor
@@ -25,27 +29,26 @@ class axi_slv_agent extends uvm_agent;
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
 
-    //if(!uvm_config_db #(axi_env_config)::get(this,"","env_cfg",env_cfg))
-    //  `uvm_fatal(get_name(),"env_config_db get failed!")
-
-    if(!uvm_config_db#(virtual axi_slv_inf)::get(this,"","m_vif", vif))
-      `uvm_fatal("NO_VIF",{"virtual interface must be set for:",get_full_name()});
+    if(!uvm_config_db #(axi_slv_config)::get(this,"","slv_cfg",slv_cfg))
+      `uvm_fatal(get_name(),"config_db get failed in slave agent")
 
     //create agent components
-    //if (env_cfg.is_active_wagt == UVM_ACTIVE) begin
-    slv_drv = axi_slv_drv::type_id::create("slv_drv",this);
-    slv_seqr = axi_slv_seqr::type_id::create("slv_seqr",this);
-    //end
+    if (slv_cfg.is_active == UVM_ACTIVE) begin
+      slv_drv = axi_slv_drv::type_id::create("slv_drv",this);
+      slv_seqr = axi_slv_seqr::type_id::create("slv_seqr",this);
+    end
     slv_mon = axi_slv_mon::type_id::create("slv_mon",this);
   endfunction
 
   //connect_phase
   function void connect_phase(uvm_phase phase);
-    mas_drv.vif = vif;
-    mas_mon.vif = vif;
-   // if (env_cfg.is_active_wagt == UVM_ACTIVE) begin
-      //slv_drv.seq_item_port.connect(slv_seqr.seq_item_export);
-    //end
+    if (slv_cfg.is_active == UVM_ACTIVE) begin
+      slv_drv.vif = slv_cfg.vif;
+      slv_drv.seq_item_port.connect(slv_seqr.seq_item_export);
+    end
+
+    slv_mon.vif = slv_cfg.vif;
+    //slv_ap = slv_mon.mas_ap;
   endfunction
 
 endclass

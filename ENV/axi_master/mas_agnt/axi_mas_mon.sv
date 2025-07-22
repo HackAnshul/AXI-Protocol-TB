@@ -8,7 +8,7 @@ class axi_mas_mon extends uvm_monitor;
   //factory registration
   `uvm_component_utils(axi_mas_mon);
 
-  virtual axi_inf vif;
+  virtual axi_mas_inf vif;
 
   uvm_analysis_port #(axi_mas_seq_item) item_collected_port;
 
