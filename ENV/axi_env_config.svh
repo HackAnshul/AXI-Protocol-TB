@@ -1,3 +1,5 @@
+`ifndef AXI_ENV_CONFIG_SV
+`define AXI_ENV_CONFIG_SV
 class axi_env_config extends uvm_object;
 
   //uvm_active_passive_enum no_of_mas_agt;
@@ -17,3 +19,4 @@ class axi_env_config extends uvm_object;
   endfunction
 
 endclass
+`endif

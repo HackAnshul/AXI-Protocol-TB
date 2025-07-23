@@ -27,6 +27,7 @@ class axi_mas_mon extends uvm_monitor;
   //run_phase
   task run_phase(uvm_phase phase);
     forever begin
+      @(vif.mas_mon_cb);
       //sampling logic
       monitor(trans_collected);
       //broadcasting seq_item to scoreboard

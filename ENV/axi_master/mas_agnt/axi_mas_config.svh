@@ -1,3 +1,6 @@
+
+`ifndef AXI_MAS_CONFIG_SV
+`define AXI_MAS_CONFIG_SV
 class axi_mas_config extends uvm_object;
 
   `uvm_object_utils_begin(axi_mas_config)
@@ -13,3 +16,4 @@ class axi_mas_config extends uvm_object;
   virtual axi_mas_inf vif;
 
 endclass
+`endif

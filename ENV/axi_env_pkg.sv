@@ -1,4 +1,5 @@
-
+`ifndef AXI_ENVPKG_SV
+`define AXI_ENVPKG_SV
 package axi_env_pkg;
 
   import uvm_pkg::*;
@@ -19,4 +20,5 @@ package axi_env_pkg;
   `include "axi_env.sv"
 
 endpackage
+`endif
 

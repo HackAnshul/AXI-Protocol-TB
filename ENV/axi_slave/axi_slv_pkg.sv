@@ -1,4 +1,5 @@
-
+`ifndef AXI_SLV_PKG_SV
+`define AXI_SLV_PKG_SV
 `include "axi_defines.svh"
   `include "axi_slv_inf.sv"
 package axi_slv_pkg;
@@ -11,3 +12,4 @@ package axi_slv_pkg;
 
   import axi_mas_agt_pkg::*;
 endpackage
+`endif

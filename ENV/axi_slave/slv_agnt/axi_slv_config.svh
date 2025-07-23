@@ -1,3 +1,5 @@
+`ifndef AXI_SLV_CONFIG_SV
+`define AXI_SLV_CONFIG_SV
 class axi_slv_config extends uvm_object;
 
   `uvm_object_utils_begin(axi_slv_config)
@@ -12,3 +14,4 @@ class axi_slv_config extends uvm_object;
 
   virtual axi_slv_inf vif;
 endclass
+`endif

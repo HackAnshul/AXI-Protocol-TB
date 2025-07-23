@@ -47,12 +47,12 @@ class axi_base_test extends uvm_test;
   endfunction
 
   //run_phase
-  task run_phase(uvm_phase phase);
-    phase.raise_objection(this);
-    #100;
-    phase.drop_objection(this);
-    phase.phase_done.set_drain_time(this,20ns);
-  endtask
+  // task run_phase(uvm_phase phase);
+  //   phase.raise_objection(this);
+  //   #100;
+  //   phase.drop_objection(this);
+  //   phase.phase_done.set_drain_time(this,20ns);
+  // endtask
 
   function void report_phase(uvm_phase phase);
     uvm_report_server server_h;

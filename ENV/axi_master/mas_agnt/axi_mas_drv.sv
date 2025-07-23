@@ -40,11 +40,11 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
 
     forever begin
       seq_item_port.get(req);
-      if (req.opr == READ || req.opr == RW)
+      if (req.opr == READ || req.opr == RW) begin
         r_addr_que.push_back(req);
         r_data_que.push_back(req);
       end
-      if (req.opr == WRITE || req.opr == RW)
+      if (req.opr == WRITE || req.opr == RW) begin
         w_addr_que.push_back(req);
         w_data_que.push_back(req);
         w_resp_que.push_back(req);

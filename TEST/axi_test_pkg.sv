@@ -1,3 +1,6 @@
+`ifndef AXI_TEST_PKG
+`define AXI_TEST_PKG
+
 package axi_test_pkg;
   import uvm_pkg::*;
   `include "uvm_macros.svh"
@@ -8,7 +11,7 @@ package axi_test_pkg;
   import axi_mas_pkg::*;
   import axi_slv_pkg::*;
   import axi_env_pkg::*;
-  `include "axi_env_config.svh"
+//  `include "axi_env_config.svh"
 
   `include "axi_base_test.sv"
 
@@ -21,3 +24,4 @@ package axi_test_pkg;
 
 
 endpackage
+`endif

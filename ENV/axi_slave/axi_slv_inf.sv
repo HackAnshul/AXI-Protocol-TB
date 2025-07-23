@@ -1,6 +1,7 @@
 `ifndef AXI_SLV_INF_SV
 `define AXI_SLV_INF_SV
 
+//interface axi_slv_inf #(parameter ADDR_WIDTH = 32, DATA_WIDTH = 32, ID_W_WIDTH = 8, ID_R_WIDTH = 8) (input aclk, aresetn);
 interface axi_slv_inf (input aclk, aresetn);
 
   //write address channel signals

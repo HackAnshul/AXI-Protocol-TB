@@ -1,9 +1,11 @@
+`ifndef AXI_TB_TOP
+`define AXI_TB_TOP
 module axi_tb_top();
   import uvm_pkg::*;
   `include "uvm_macros.svh"
 
   import axi_test_pkg::*;
-  bit clk;
+  bit clk,resetn;
 
   // Generate clock
   initial begin
@@ -12,8 +14,8 @@ module axi_tb_top();
   end
 
   // Take instance of actual interface
-  axi_mas_inf mas_inf(clk);
-  axi_slv_inf slv_inf(clk);
+  axi_mas_inf mas_inf(clk,resetn);
+  axi_slv_inf slv_inf(clk,resetn);
 
   // Instantiate design under test (DUT)
   // or connect with master and slave back to back
@@ -26,3 +28,4 @@ module axi_tb_top();
     run_test();
   end
 endmodule
+`endif

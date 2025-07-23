@@ -1,6 +1,6 @@
 ////HEADER
-`ifndef RAM_ENV_SV
-`define RAM_ENV_SV
+`ifndef AXI_ENV_SV
+`define AXI_ENV_SV
 
 class axi_env extends uvm_env;
 
@@ -29,7 +29,6 @@ class axi_env extends uvm_env;
     env_cfg = axi_env_config::type_id::create("env_cfg");
     if ( ! uvm_config_db #(axi_env_config)::get(null,"*","env_cfg",env_cfg) )
       `uvm_fatal("NO_ENV",{"environment config not found ",get_full_name()});
-
     if (env_cfg.has_mas_agt) begin
       uvm_config_db#( axi_mas_config )::set(this,"mas_agent*","mas_cfg",env_cfg.mas_cfg);
       mas_agent = axi_mas_agent::type_id::create("mas_agent",this);
@@ -52,8 +51,8 @@ class axi_env extends uvm_env;
     //w_agent.w_monitor.item_collected_port.connect(scb.item_collected_export_w);
     //r_agent.r_monitor.item_collected_port.connect(scb.item_collected_export_r);
 
-    vseqr_h.mas_seqr_h = mas_agent.mas_seqr_h;
-    vseqr_h.slv_seqr_h = slv_agent.slv_seqr_h;
+    vseqr_h.mas_seqr = mas_agent.mas_seqr;
+    vseqr_h.slv_seqr = slv_agent.slv_seqr;
   endfunction
 
 endclass

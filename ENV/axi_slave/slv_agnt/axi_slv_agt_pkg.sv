@@ -1,3 +1,5 @@
+`ifndef AXI_SLV_AGENT_PKG_SV
+`define AXI_SLV_AGENT_PKG_SV
 package axi_slv_agt_pkg;
 
   import uvm_pkg::*;
@@ -13,4 +15,4 @@ package axi_slv_agt_pkg;
 
   `include "axi_slv_base_seqs.sv"
 endpackage
-
+`endif

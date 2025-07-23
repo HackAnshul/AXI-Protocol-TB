@@ -4,6 +4,7 @@
 `define AXI_MAS_SEQ_ITEM_SV
 typedef enum bit [1:0] {IDLE,READ,WRITE,RW} operation_t;
 
+//class  axi_mas_seq_item #(int ADDR_WIDTH = 32, DATA_WIDTH = 32, ID_W_WIDTH = 8, ID_R_WIDTH = 8) extends uvm_sequence_item;
 class  axi_mas_seq_item extends uvm_sequence_item;
 
   //write address channel signals (to be sent)
@@ -45,7 +46,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   //bit rlast;
   //bit rvalid;
   //bit rready;
-  operation_t opr;
+  rand operation_t opr;
 
   `uvm_object_utils_begin(axi_mas_seq_item)
     `uvm_field_int(awid, UVM_ALL_ON | UVM_DEC)
@@ -53,11 +54,11 @@ class  axi_mas_seq_item extends uvm_sequence_item;
     `uvm_field_int(awlen, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(awsize, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(awburst, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(awvalid, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(awready, UVM_ALL_ON | UVM_DEC)
+    //`uvm_field_int(awvalid, UVM_ALL_ON | UVM_DEC)
+    //`uvm_field_int(awready, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(wid, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(wdata, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(wstrb, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_queue_int(wdata, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_queue_int(wstrb, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(wlast, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(wvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(wready, UVM_ALL_ON | UVM_DEC)
@@ -73,7 +74,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
     //`uvm_field_int(arvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(arready, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(rid, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(rdata, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_queue_int(rdata, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(rresp, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(rlast, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(rvalid, UVM_ALL_ON | UVM_DEC)

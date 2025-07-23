@@ -28,7 +28,7 @@ class axi_slv_drv extends uvm_driver #(axi_slv_seq_item);
   task run_phase(uvm_phase phase);
     //fork
       forever begin
-        @(vif.mas_drv_cb);
+        @(vif.slv_drv_cb);
         seq_item_port.get(req);
         //req.print();
         //
@@ -59,7 +59,7 @@ class axi_slv_drv extends uvm_driver #(axi_slv_seq_item);
   task w_data_phase();
   endtask
 
-  task r_data_phase();
+  task r_addr_phase();
   endtask
 
   task r_data_phase();

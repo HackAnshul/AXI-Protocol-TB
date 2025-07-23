@@ -1,3 +1,5 @@
+`ifndef AXI_MAS_AGENT_PKG_SV
+`define AXI_MAS_AGENT_PKG_SV
 package axi_mas_agt_pkg;
 
   import uvm_pkg::*;
@@ -13,3 +15,4 @@ package axi_mas_agt_pkg;
 
   `include "axi_mas_base_seqs.sv"
 endpackage
+`endif
