@@ -23,6 +23,6 @@ module axi_tb_top();
     uvm_config_db #(virtual axi_mas_inf)::set(null, "*", "m_vif", mas_inf);
     uvm_config_db #(virtual axi_slv_inf)::set(null, "*", "s_vif", slv_inf);
 
-    run_test("axi_base_test");
+    run_test();
   end
 endmodule

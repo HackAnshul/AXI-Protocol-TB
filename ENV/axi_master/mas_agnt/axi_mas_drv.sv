@@ -8,8 +8,14 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
   //factory registration
   `uvm_component_utils(axi_mas_drv)
 
-  axi_mas_seq_item addr_que [$];
-  axi_mas_seq_item data_que [$];
+  //to send
+  axi_mas_seq_item w_addr_que [$];
+  axi_mas_seq_item w_data_que [$];
+  axi_mas_seq_item r_addr_que [$];
+
+  //to receive
+  axi_mas_seq_item r_data_que [$];
+  axi_mas_seq_item w_resp_que [$];
 
   //virtual interface
   virtual axi_mas_inf vif;
@@ -25,31 +31,61 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
 
   task run_phase(uvm_phase phase);
     fork
-      forever begin
-        seq_item_port.get(req); //req-dafault handle of seq_item
-        req.print();
-        //
-        addr_que.push_back(req);
-        data_que.push_back(req);
-        //
-        $cast(rsp,req.clone());
-        rsp.set_id_info(req);
-      end
+      w_addr_phase();
+      w_data_phase();
+      w_resp_phase();
+      r_addr_phase();
+      r_data_phase();
     join_none
-    drive();
+
+    forever begin
+      seq_item_port.get(req);
+      if (req.opr == READ || req.opr == RW)
+        r_addr_que.push_back(req);
+        r_data_que.push_back(req);
+      end
+      if (req.opr == WRITE || req.opr == RW)
+        w_addr_que.push_back(req);
+        w_data_que.push_back(req);
+        w_resp_que.push_back(req);
+      end
+      $cast(rsp,req.clone());
+      //rsp.set_id_info(req);
+    end
   endtask
 
-  task drive();
-    fork
-      addr_phase();
-      data_phase();
-    join
+  task w_addr_phase(); // write address channel
+    axi_mas_seq_item item;
+    forever begin
+      wait(w_addr_que.size != 0);
+      #0;
+      item = w_addr_que.pop_front();
+      @(vif.mas_drv_cb);
+      vif.awvalid <= 1'b1;
+      while ( vif.awready == 1'b0 ) begin
+        vif.awid    <= item.awid;
+        vif.awaddr  <= item.awaddr;
+        vif.awlen   <= item.awlen;
+        vif.awsize  <= item.awsize;
+        vif.awburst <= item.awburst;
+      end
+    end
   endtask
 
-  task addr_phase();
+  task w_data_phase();
+    @(vif.mas_drv_cb);
   endtask
 
-  task data_phase();
+  task w_resp_phase();
+    @(vif.mas_drv_cb);
+  endtask
+
+  task r_addr_phase();
+    @(vif.mas_drv_cb);
+  endtask
+
+  task r_data_phase();
+    @(vif.mas_drv_cb);
   endtask
 endclass
 

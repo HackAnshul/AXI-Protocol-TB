@@ -1,11 +1,10 @@
 class axi_base_virt_seqs extends uvm_sequence #(uvm_sequence_item);
 
-  //`uvm_declare_p_sequencer(axi_virt_seqr)
-  //ram_virtual_sequencer p_sequencer;
+  `uvm_declare_p_sequencer(axi_virt_seqr)
 
   //sub sequencer
-  //axi_mas_seqr wseqr_h;
-  //axi_slv_seqr rseqr_h;
+  axi_mas_seqr mas_seqr_h;
+  axi_slv_seqr slv_seqr_h;
 
   `uvm_object_utils_begin(axi_base_virt_seqs)
   `uvm_object_utils_end
@@ -14,15 +13,9 @@ class axi_base_virt_seqs extends uvm_sequence #(uvm_sequence_item);
     super.new(name);
   endfunction
 
-  /*task pre_start();
-  task pre_body();
-  task body();
-    if(!$cast(p_sequencer,m_sequencer))
-    if(!$cast(vseqr_h,m_sequencer))
-      `uvm_fatal(get_full_name(),"virtual sequencer cast failed!")
-
-    wseqr_h = p_sequencer.wseqr_h;
-    rseqr_h = p_sequencer.rseqr_h;
-  endtask*/
+  task pre_start();
+    mas_seqr_h = p_sequencer.mas_seqr_h;
+    slv_seqr_h = p_sequencer.slv_seqr_h;
+  endtask
 
 endclass

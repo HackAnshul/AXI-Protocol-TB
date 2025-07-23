@@ -14,4 +14,10 @@ package axi_test_pkg;
 
   //testcases go below
 
+  //sanity test
+  `include "axi_mas_sanity_seqs.sv"
+  `include "axi_slv_sanity_seqs.sv"
+  `include "axi_test_sanity.sv"
+
+
 endpackage

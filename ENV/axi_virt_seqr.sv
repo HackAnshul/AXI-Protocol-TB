@@ -1,7 +1,9 @@
 
  class axi_virt_seqr extends uvm_sequencer #(uvm_sequence_item);
 
-    //sub sequencer
+  //sub sequencer
+  axi_mas_seqr mas_seqr_h;
+  axi_slv_seqr slv_seqr_h;
 
     `uvm_component_utils_begin(axi_virt_seqr)
     `uvm_component_utils_end

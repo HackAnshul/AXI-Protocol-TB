@@ -8,8 +8,14 @@ class axi_slv_drv extends uvm_driver #(axi_slv_seq_item);
   //factory registration
   `uvm_component_utils(axi_slv_drv)
 
-  axi_slv_seq_item addr_que [$];
-  axi_slv_seq_item data_que [$];
+  //to receive
+  axi_slv_seq_item w_addr_que [$];
+  axi_slv_seq_item w_data_que [$];
+  axi_slv_seq_item r_addr_que [$];
+
+  //to send
+  axi_slv_seq_item r_data_que [$];
+  axi_slv_seq_item w_resp_que [$];
 
   //virtual interface
   virtual axi_slv_inf vif;
@@ -19,37 +25,47 @@ class axi_slv_drv extends uvm_driver #(axi_slv_seq_item);
     super.new(name,parent);
   endfunction
 
-  // function void build_phase(uvm_phase phase);
-  //   super.build_phase(phase);
-  // endfunction
-
   task run_phase(uvm_phase phase);
-    fork
+    //fork
       forever begin
-        seq_item_port.get(req); //req-dafault handle of seq_item
-        req.print();
+        @(vif.mas_drv_cb);
+        seq_item_port.get(req);
+        //req.print();
         //
-        addr_que.push_back(req);
-        data_que.push_back(req);
+        //w_resp_que.push_back(req);
+        //r_data_que.push_back(req);
         //
-        $cast(rsp,req.clone());
-        rsp.set_id_info(req);
+        //$cast(rsp,req.clone());
+        //rsp.set_id_info(req);
+        //seq_item_port.put(rsp); // return the response to sequencer
       end
-    join_none
-    drive();
+    //join_none
+    //drive();
   endtask
 
   task drive();
     fork
-      addr_phase();
-      data_phase();
+      w_addr_phase();
+      w_data_phase();
+      r_addr_phase();
+      r_data_phase();
+      w_resp_phase();
     join
   endtask
 
-  task addr_phase();
+  task w_addr_phase();
   endtask
 
-  task data_phase();
+  task w_data_phase();
+  endtask
+
+  task r_data_phase();
+  endtask
+
+  task r_data_phase();
+  endtask
+
+  task w_resp_phase();
   endtask
 endclass
 

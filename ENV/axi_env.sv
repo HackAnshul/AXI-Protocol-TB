@@ -52,8 +52,8 @@ class axi_env extends uvm_env;
     //w_agent.w_monitor.item_collected_port.connect(scb.item_collected_export_w);
     //r_agent.r_monitor.item_collected_port.connect(scb.item_collected_export_r);
 
-    //vseqr_h.wseqr_h = w_agent.w_sequencer;
-    //vseqr_h.rseqr_h = r_agent.r_sequencer;
+    vseqr_h.mas_seqr_h = mas_agent.mas_seqr_h;
+    vseqr_h.slv_seqr_h = slv_agent.slv_seqr_h;
   endfunction
 
 endclass
