@@ -47,25 +47,38 @@ interface axi_mas_inf (input aclk, aresetn);
   //clocking block for slave driver
   clocking mas_drv_cb @(posedge aclk or negedge aresetn);
     default input #1 output #1;
-
-    input awid, awaddr, awlen, awsize, awburst, awvalid, wid, wdata, wstrb, wlast, wvalid,bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
-
-    output awready, wready, bid, bresp, bvalid, arready, rid, rdata, rresp, rlast, rvalid;
-
+    input awid, awaddr, awlen, awsize, awburst, awvalid;
+    input wid, wdata, wstrb, wlast, wvalid;
+    input arid, araddr, arlen, arsize, arburst, arvalid;
+    input bready, rready;
+    output awready, wready, bid, bresp, bvalid, arready;
+    output rid, rdata, rresp, rlast, rvalid;
   endclocking
 
   //clocking block for slave monitor
   clocking mas_mon_cb @(posedge aclk or negedge aresetn);
     default input #1 output #1;
-
-    input awid, awaddr, awlen, awsize, awburst, awvalid, wid, wdata, wstrb, wlast, wvalid,bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
-
-    input awready, wready, bid, bresp, bvalid, arready, rid, rdata, rresp, rlast, rvalid;
-
+    input awid, awaddr, awlen, awsize, awburst, awvalid;
+    input wid, wdata, wstrb, wlast, wvalid;
+    input bready, rready;
+    input arid, araddr, arlen, arsize, arburst, arvalid;
+    input awready, wready, bid, bresp, bvalid, arready;
+    input rid, rdata, rresp, rlast, rvalid;
   endclocking
 
   modport MAS_DRV_MP (clocking mas_drv_cb, input aclk, input aresetn);
   modport MAS_MON_MP (clocking mas_mon_cb, input aclk, input aresetn);
+
+  task wait_reset_assert();
+    wait (aresetn == 0);
+  endtask
+  task wait_reset_release();
+    wait (aresetn == 1);
+  endtask
+  task aw_valid_task(int no_of_cycles);
+    awvalid <= 1'b0;
+    repeat(no_of_cycles) @(posedge aclk);
+  endtask
 
 endinterface
 

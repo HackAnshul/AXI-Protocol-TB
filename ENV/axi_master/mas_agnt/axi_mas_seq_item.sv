@@ -46,7 +46,9 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   //bit rlast;
   //bit rvalid;
   //bit rready;
+
   rand operation_t opr;
+
 
   `uvm_object_utils_begin(axi_mas_seq_item)
     `uvm_field_int(awid, UVM_ALL_ON | UVM_DEC)
@@ -85,6 +87,61 @@ class  axi_mas_seq_item extends uvm_sequence_item;
     super.new(name);
   endfunction
 
+  //CONSTRAINTS
+  //to select which data to generate according to operation //implemented in driver
+
+  //for burst length according to axburst
+  constraint brst_len_cnt {
+    if (awburst == 2'b00) awlen inside {[0:15]};
+    if (awburst == 2'b01) awlen inside {[0:255]};
+    if (awburst == 2'b10) awlen inside {[2,4,8,16]};
+
+    if (arburst == 2'b00) arlen inside {[0:15]};
+    if (arburst == 2'b01) arlen inside {[0:255]};
+    if (arburst == 2'b10) arlen inside {[2,4,8,16]};
+  }
+
+  //for wdata/rdata queue
+  constraint queue_data {
+    wdata.size == awlen + 1;
+    wstrb.size == awlen + 1;
+  }
+
+  //for 4k bytes boundary
+  constraint addr_in_4k {
+    awaddr%4096 + (awlen + (1 << awsize)) <= 4096;
+    araddr%4096 + (arlen + (1 << arsize)) <= 4096;
+  }
+
+  local bit [`ID_X_WIDTH-1:0] awid_prev;
+  local bit [`ID_X_WIDTH-1:0] awid_prev;
+  constraint diff_consecutive_id {
+    soft awid != awid_prev;
+    soft arid != arid_prev;
+  }
+  //to limit axsize according to data width
+  constraint axsize_limit {
+    awsize inside {[0:$clog2(`DATA_WIDTH)]};
+  }
+  //write strobe
+  //local rand int offset;
+  /*constraint strb{
+    solve awaddr before wstrb;
+    solve awsize before wstrb;
+    solve awlen before wstrb;
+    if (`DATA_WIDTH == (1 << awsize)){
+      awaddr % (`DATA_WIDTH/8)  == offset;
+    } else {
+
+    }
+  }*/
+
+  function void post_randomize();
+    awid_prev = awid;
+    arid_prev = arid;
+    /*foreach (wstrb[i]) wstrb[i] == '1;
+    wstrb[0] = wstrb[0] << offset;*/
+  endfunction
 endclass
 
 `endif
