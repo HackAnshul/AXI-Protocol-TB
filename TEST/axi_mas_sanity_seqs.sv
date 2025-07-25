@@ -16,7 +16,7 @@ class axi_mas_sanity_seqs extends axi_mas_base_seqs;
     repeat(no_of_itr) begin
       req = axi_mas_seq_item::type_id::create("req");
       start_item(req);
-      if(!req.randomize() with {opr == WRITE; })
+      if(!req.randomize() with {opr == RW; })
         `uvm_error("MAS_SEQ","FAILED")
       finish_item(req);
     end

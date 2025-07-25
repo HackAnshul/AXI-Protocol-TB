@@ -10,4 +10,5 @@ vlog:
 sim_cmd:
 	vsim -voptargs=+acc $(TOP_MOD) -c -do "run -all;exit" +UVM_TESTNAME=$(TESTNAME)
 sim_gui:
-	vsim -voptargs=+acc $(TOP_MOD)
+	vsim -voptargs=+acc $(TOP_MOD) +UVM_TESTNAME=$(TESTNAME)
+

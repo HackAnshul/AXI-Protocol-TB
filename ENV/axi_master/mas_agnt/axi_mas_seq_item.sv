@@ -92,13 +92,8 @@ class  axi_mas_seq_item extends uvm_sequence_item;
 
   //for burst length according to axburst
   constraint brst_len_cnt {
-    if (awburst == 2'b00) awlen inside {[0:15]};
-    if (awburst == 2'b01) awlen inside {[0:255]};
-    if (awburst == 2'b10) awlen inside {[2,4,8,16]};
+    awlen inside {[0:5]};
 
-    if (arburst == 2'b00) arlen inside {[0:15]};
-    if (arburst == 2'b01) arlen inside {[0:255]};
-    if (arburst == 2'b10) arlen inside {[2,4,8,16]};
   }
 
   //for wdata/rdata queue
@@ -114,7 +109,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   }
 
   local bit [`ID_X_WIDTH-1:0] awid_prev;
-  local bit [`ID_X_WIDTH-1:0] awid_prev;
+  local bit [`ID_X_WIDTH-1:0] arid_prev;
   constraint diff_consecutive_id {
     soft awid != awid_prev;
     soft arid != arid_prev;

@@ -17,15 +17,27 @@ module axi_tb_top();
   axi_mas_inf mas_inf(clk,resetn);
   axi_slv_inf slv_inf(clk,resetn);
 
+  assign mas_inf.wready = 1;
+  assign mas_inf.awready = 1;
+
   // Instantiate design under test (DUT)
   // or connect with master and slave back to back
 
   initial begin
 
+    fork
     uvm_config_db #(virtual axi_mas_inf)::set(null, "*", "m_vif", mas_inf);
     uvm_config_db #(virtual axi_slv_inf)::set(null, "*", "s_vif", slv_inf);
 
+    reset(2);
     run_test();
+  join
   end
+  task reset(int delay =2);
+    resetn = 0;
+    @(posedge clk)
+    resetn = 1;
+  endtask
 endmodule
+
 `endif
