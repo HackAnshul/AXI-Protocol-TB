@@ -50,7 +50,9 @@ interface axi_slv_inf (input aclk, aresetn);
 
     input awready, wready, bid, bresp, bvalid, arready, rid, rdata, rresp, rlast, rvalid;
 
-    output awid, awaddr, awlen, awsize, awburst, awvalid, wid, wdata, wstrb, wlast, wvalid,bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
+    output awid, awaddr, awlen, awsize, awburst, awvalid;
+    output wid, wdata, wstrb, wlast, wvalid;
+    output bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
 
   endclocking
 
@@ -58,7 +60,9 @@ interface axi_slv_inf (input aclk, aresetn);
   clocking slv_mon_cb @(posedge aclk or negedge aresetn);
     default input #1 output #1;
 
-    input awid, awaddr, awlen, awsize, awburst, awvalid, wid, wdata, wstrb, wlast, wvalid,bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
+    input awid, awaddr, awlen, awsize, awburst, awvalid;
+    input wid, wdata, wstrb, wlast, wvalid;
+    input bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
     input awready, wready, bid, bresp, bvalid, arready, rid, rdata, rresp, rlast, rvalid;
 
   endclocking

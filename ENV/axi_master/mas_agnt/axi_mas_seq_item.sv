@@ -19,7 +19,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   //write data channel signals (to be send)
   rand bit [`ID_X_WIDTH-1:0]wid;
   rand bit [`DATA_WIDTH-1:0]wdata[$];
-  rand bit [`DATA_WIDTH/8:0]wstrb[$];
+  rand bit [`DATA_WIDTH/8 -1:0]wstrb[$];
   //rand bit wlast;
   //bit wvalid;
   //bit wready;
@@ -93,8 +93,16 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   //for burst length according to axburst
   constraint brst_len_cnt {
     awlen inside {[0:5]};
-
   }
+  //constraint brst_len_cnt {
+  //  if (awburst == 2'b00) awlen inside {[0:15]};
+  //  if (awburst == 2'b01) awlen inside {[0:255]};
+  //  if (awburst == 2'b10) awlen inside {[2,4,8,16]};
+  //
+  //  if (arburst == 2'b00) arlen inside {[0:15]};
+  //  if (arburst == 2'b01) arlen inside {[0:255]};
+  //  if (arburst == 2'b10) arlen inside {[2,4,8,16]};
+  //}
 
   //for wdata/rdata queue
   constraint queue_data {
@@ -131,11 +139,38 @@ class  axi_mas_seq_item extends uvm_sequence_item;
     }
   }*/
 
+  function void wstrb_calc();
+    bit [`ADDR_WIDTH-1:0] aligned_addr;
+    bit [`DATA_WIDTH/8-1:0] start_lane;
+    bit [`DATA_WIDTH/8-1:0] no_of_byte;
+    bit [`DATA_WIDTH/8-1:0] idx;
+
+    start_lane = awaddr % (`DATA_WIDTH/8);
+    aligned_addr = awaddr - start_lane;
+    no_of_byte = 1 << awsize;
+    idx = start_lane;
+
+    if (no_of_byte == 1)
+      start_lane = 0;
+    else if (start_lane >= no_of_bytes)
+      start_lane = start_lane - no_of_byte;
+
+    foreach(wstrb[i]) begin
+      for(int j = 0; j<no_of_byte; j++) begin
+        wstrb[i][k] = 1;
+        k++;
+        if (k == data_lane)
+          k = 0;
+      end
+      start_lane = 0;
+    end
+  endfunction
   function void post_randomize();
     awid_prev = awid;
     arid_prev = arid;
     /*foreach (wstrb[i]) wstrb[i] == '1;
     wstrb[0] = wstrb[0] << offset;*/
+    wstrb_calc();
   endfunction
 endclass
 

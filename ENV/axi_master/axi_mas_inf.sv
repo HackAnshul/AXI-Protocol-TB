@@ -47,12 +47,12 @@ interface axi_mas_inf (input aclk, aresetn);
   //clocking block for slave driver
   clocking mas_drv_cb @(posedge aclk or negedge aresetn);
     default input #1 output #1;
-    input awid, awaddr, awlen, awsize, awburst, awvalid;
-    input wid, wdata, wstrb, wlast, wvalid;
-    input arid, araddr, arlen, arsize, arburst, arvalid;
-    input bready, rready;
-    output awready, wready, bid, bresp, bvalid, arready;
-    output rid, rdata, rresp, rlast, rvalid;
+    output awid, awaddr, awlen, awsize, awburst, awvalid;
+    output wid, wdata, wstrb, wlast, wvalid;
+    output arid, araddr, arlen, arsize, arburst, arvalid;
+    output bready, rready;
+    input awready, wready, bid, bresp, bvalid, arready;
+    input rid, rdata, rresp, rlast, rvalid;
   endclocking
 
   //clocking block for slave monitor
