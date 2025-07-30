@@ -49,7 +49,6 @@ class  axi_mas_seq_item extends uvm_sequence_item;
 
   rand operation_t opr;
 
-
   `uvm_object_utils_begin(axi_mas_seq_item)
     `uvm_field_int(awid, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(awaddr, UVM_ALL_ON | UVM_DEC)
@@ -60,7 +59,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
     //`uvm_field_int(awready, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(wid, UVM_ALL_ON | UVM_DEC)
     `uvm_field_queue_int(wdata, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_queue_int(wstrb, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_queue_int(wstrb, UVM_ALL_ON | UVM_BIN)
     //`uvm_field_int(wlast, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(wvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(wready, UVM_ALL_ON | UVM_DEC)
@@ -107,7 +106,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   //for wdata/rdata queue
   constraint queue_data {
     wdata.size == awlen + 1;
-    wstrb.size == awlen + 1;
+    //wstrb.size == awlen + 1;
   }
 
   //for 4k bytes boundary
@@ -124,7 +123,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   }
   //to limit axsize according to data width
   constraint axsize_limit {
-    awsize inside {[0:$clog2(`DATA_WIDTH)]};
+    awsize inside {[0:$clog2(`DATA_WIDTH/8)]};
   }
   //write strobe
   //local rand int offset;
@@ -142,7 +141,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   function void wstrb_calc();
     bit [`ADDR_WIDTH-1:0] aligned_addr;
     bit [`DATA_WIDTH/8-1:0] start_lane;
-    bit [`DATA_WIDTH/8-1:0] no_of_byte;
+    bit [`DATA_WIDTH:0] no_of_byte;
     bit [`DATA_WIDTH/8-1:0] idx;
 
     start_lane = awaddr % (`DATA_WIDTH/8);
@@ -152,15 +151,18 @@ class  axi_mas_seq_item extends uvm_sequence_item;
 
     if (no_of_byte == 1)
       start_lane = 0;
-    else if (start_lane >= no_of_bytes)
+    else if (start_lane >= no_of_byte)
       start_lane = start_lane - no_of_byte;
 
-    foreach(wstrb[i]) begin
+    $display("no of bytes = %d",no_of_byte);
+
+    for(int i=0; i< wdata.size; i++) begin
+      wstrb.push_back('0);
       for(int j = 0; j<no_of_byte; j++) begin
-        wstrb[i][k] = 1;
-        k++;
-        if (k == data_lane)
-          k = 0;
+        wstrb[i][idx] = 1;
+        idx++;
+        if (idx == (`DATA_WIDTH/8))
+          idx = 0;
       end
       start_lane = 0;
     end
