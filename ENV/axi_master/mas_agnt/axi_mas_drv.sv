@@ -8,6 +8,8 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
   //factory registration
   `uvm_component_utils(axi_mas_drv)
 
+  event ev1;
+
   //to send
   axi_mas_seq_item w_addr_que [$];
   axi_mas_seq_item w_data_que [$];
@@ -39,7 +41,9 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
     join_none
 
     forever begin
-      seq_item_port.get_next_item(req);
+      seq_item_port.get(req);
+      phase.raise_objection(this);
+
       `uvm_info(get_name(),$sformatf("in driver\n%s",req.sprint()), UVM_LOW)
       if (req.opr == READ || req.opr == RW) begin
         r_addr_que.push_back(req);
@@ -50,8 +54,9 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
         w_data_que.push_back(req);
         w_resp_que.push_back(req);
       end
-      #100;
-      seq_item_port.item_done();
+      wait(ev1.triggered);
+      phase.drop_objection(this);
+
       //$cast(rsp,req.clone());
       //rsp.set_id_info(req);
     end
@@ -94,6 +99,7 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
         while (vif.mas_drv_cb.wready == 1'b0) @(vif.mas_drv_cb);
         if (w_data_que.size == 0) vif.mas_drv_cb.wvalid <= 1'b0;
       end
+      -> ev1;
     end
   endtask
 
