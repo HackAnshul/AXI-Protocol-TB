@@ -20,17 +20,19 @@ class axi_scb extends uvm_component;
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
+    item_collected_imp_mas_w = new("item_collected_imp_mas_w",this);
+    item_collected_imp_mas_r = new("item_collected_imp_mas_r",this);
   endfunction
 
   //run_phase
   task run_phase(uvm_phase phase);
   endtask
 
-  task write_mas_w();
-  endtask
+  function void write_mas_w(axi_mas_seq_item item);
+  endfunction
 
-  task write_mas_r();
-  endtask
+  function void write_mas_r(axi_mas_seq_item item);
+  endfunction
 
 endclass
 

@@ -32,7 +32,8 @@ class axi_mas_mon extends uvm_monitor;
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    item_collected_port = new("item_collected_port",this);
+    w_item_collected_port = new("w_item_collected_port",this);
+    r_item_collected_port = new("r_item_collected_port",this);
   endfunction
 
   //run_phase
@@ -73,12 +74,13 @@ class axi_mas_mon extends uvm_monitor;
             if (vif.mas_mon_cb.wstrb[i])   // only sampling bytes indicated by strobes
               temp_data[(i*8)+:8]  = vif.mas_mon_cb.wdata[(i*8)+:8];
           end
-          item.wstrb.push_back(vif.mas.mon_cb.wstrb);
+          item.wstrb.push_back(vif.mas_mon_cb.wstrb);
           item.wdata.push_back(temp_data);
         end
       end while (vif.mas_mon_cb.wlast == 1'b0);
       //
-      w_data_que.push_back(item);
+      if (vif.mas_mon_cb.wlast == 1'b1)
+        w_data_que.push_back(item);
     end
   endtask
 
@@ -112,7 +114,8 @@ class axi_mas_mon extends uvm_monitor;
         end
       end while (vif.mas_mon_cb.rlast == 1'b0);
       //
-      w_data_que.push_back(item);
+      if (vif.mas_mon_cb.rlast == 1'b1)
+        r_data_que.push_back(item);
     end
   endtask
 
@@ -131,7 +134,9 @@ class axi_mas_mon extends uvm_monitor;
   endtask
 
   //monitor task
-  task monitor(ref axi_mas_seq_item mon_item);
+  task monitor();
+    axi_mas_seq_item item_w, temp_w, send_w;
+    axi_mas_seq_item item_r, temp_r, send_r;
     fork
       w_addr_phase();
       w_data_phase();
@@ -139,8 +144,6 @@ class axi_mas_mon extends uvm_monitor;
       r_addr_phase();
       r_data_phase();
     join_none
-    axi_mas_seq_item item_w, temp_w, send_w;
-    axi_mas_seq_item item_r, temp_r, send_r;
 
     fork
       forever begin
@@ -155,6 +158,8 @@ class axi_mas_mon extends uvm_monitor;
         item_w.bid   = temp_w.bid;
         item_w.bresp = temp_w.bresp;
         $cast(send_w,item_w.clone());
+        `uvm_info(get_name(),$sformatf("in write monitor\n%s",send_w.sprint()), UVM_LOW)
+
         w_item_collected_port.write(send_w);
       end
       forever begin
@@ -166,6 +171,7 @@ class axi_mas_mon extends uvm_monitor;
         item_w.rid   = temp_w.rid;
         item_r.rresp = temp_w.rresp;
         $cast(send_r,item_r.clone());
+        `uvm_info(get_name(),$sformatf("in read monitor\n%s",send_r.sprint()), UVM_LOW)
         r_item_collected_port.write(send_r);
       end
     join

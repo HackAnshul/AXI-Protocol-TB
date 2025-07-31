@@ -18,7 +18,12 @@ module axi_tb_top();
   axi_slv_inf slv_inf(clk,resetn);
 
   assign mas_inf.wready = 1;
+  assign mas_inf.rready = 1;
   assign mas_inf.awready = 1;
+  assign mas_inf.arready = 1;
+  assign mas_inf.bready = 1;
+  assign mas_inf.bvalid = 1;
+  assign mas_inf.rvalid = 1;
 
   // Instantiate design under test (DUT)
   // or connect with master and slave back to back

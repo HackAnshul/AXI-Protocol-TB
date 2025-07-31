@@ -8,8 +8,6 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
   //factory registration
   `uvm_component_utils(axi_mas_drv)
 
-  event ev1;
-
   //to send
   axi_mas_seq_item w_addr_que [$];
   axi_mas_seq_item w_data_que [$];
@@ -33,8 +31,8 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
     vif.wait_reset_release();
     @(vif.mas_drv_cb);
     fork
-      w_addr_phase();
-      w_data_phase();
+      w_addr_phase(phase);
+      w_data_phase(phase);
       w_resp_phase();
       r_addr_phase();
       r_data_phase();
@@ -42,7 +40,6 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
 
     forever begin
       seq_item_port.get(req);
-      phase.raise_objection(this);
 
       `uvm_info(get_name(),$sformatf("in driver\n%s",req.sprint()), UVM_LOW)
       if (req.opr == READ || req.opr == RW) begin
@@ -54,16 +51,15 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
         w_data_que.push_back(req);
         w_resp_que.push_back(req);
       end
-      wait(ev1.triggered);
-      phase.drop_objection(this);
 
       //$cast(rsp,req.clone());
       //rsp.set_id_info(req);
     end
   endtask
 
-  task w_addr_phase(); // write address channel
+  task w_addr_phase(uvm_phase phase); // write address channel
     axi_mas_seq_item item;
+      phase.raise_objection(this);
     forever begin
       wait(w_addr_que.size != 0);
       #0;
@@ -80,7 +76,7 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
     end
   endtask
 
-  task w_data_phase();
+  task w_data_phase(uvm_phase phase);
     axi_mas_seq_item item;
     forever begin
       wait(w_data_que.size != 0);
@@ -97,9 +93,11 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
         else
           vif.mas_drv_cb.wlast <= 1'b0;
         while (vif.mas_drv_cb.wready == 1'b0) @(vif.mas_drv_cb);
-        if (w_data_que.size == 0) vif.mas_drv_cb.wvalid <= 1'b0;
+        if (w_data_que.size == 0) begin
+          vif.mas_drv_cb.wvalid <= 1'b0;
+          phase.drop_objection(this);
+        end
       end
-      -> ev1;
     end
   endtask
 

@@ -42,7 +42,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   //read data channel signals (to be received)
   bit [`ID_X_WIDTH-1:0]rid;
   bit [`DATA_WIDTH-1:0]rdata[$];
-  bit [1:0]rresp;
+  bit [1:0]rresp[$];
   //bit rlast;
   //bit rvalid;
   //bit rready;
@@ -58,7 +58,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
     //`uvm_field_int(awvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(awready, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(wid, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_queue_int(wdata, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_queue_int(wdata, UVM_ALL_ON | UVM_HEX)
     `uvm_field_queue_int(wstrb, UVM_ALL_ON | UVM_BIN)
     //`uvm_field_int(wlast, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(wvalid, UVM_ALL_ON | UVM_DEC)
@@ -76,7 +76,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
     //`uvm_field_int(arready, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(rid, UVM_ALL_ON | UVM_DEC)
     `uvm_field_queue_int(rdata, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(rresp, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_queue_int(rresp, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(rlast, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(rvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(rready, UVM_ALL_ON | UVM_DEC)
@@ -158,7 +158,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
 
     for(int i=0; i< wdata.size; i++) begin
       wstrb.push_back('0);
-      for(int j = 0; j<no_of_byte; j++) begin
+      for(int j = 0; j< (no_of_byte-start_lane); j++) begin
         wstrb[i][idx] = 1;
         idx++;
         if (idx == (`DATA_WIDTH/8))
