@@ -11,7 +11,7 @@ class  axi_slv_seq_item extends uvm_sequence_item;
   bit [`ADDR_WIDTH-1:0]awaddr;
   bit [7:0]awlen;
   bit [2:0]awsize;
-  bit [1:0]awburst;
+  burst_t awburst;
   //bit awvalid;
   //bit awready;
 
@@ -24,8 +24,8 @@ class  axi_slv_seq_item extends uvm_sequence_item;
   //bit wready;
 
   //write response channel signals (to be sent)
-  rand bit [`ID_X_WIDTH-1:0]bid;
-  rand bit [1:0]bresp;
+  bit [`ID_X_WIDTH-1:0]bid;
+  bit [1:0]bresp;
   //bit bvalid;
   //bit bready;
 
@@ -34,29 +34,31 @@ class  axi_slv_seq_item extends uvm_sequence_item;
   bit [`ADDR_WIDTH-1:0]araddr;
   bit [7:0]arlen;
   bit [2:0]arsize;
-  bit [1:0]arburst;
+  burst_t arburst;
   //bit arvalid;
   //bit arready;
 
   //read data channel signals (to be sent)
   bit [`ID_X_WIDTH-1:0]rid;
   bit [`DATA_WIDTH-1:0]rdata[$];
-  bit [1:0]rresp;
+  bit [1:0]rresp[$];
   //bit rlast;
   //bit rvalid;
   //bit rready;
+
+  operation_t opr;
 
   `uvm_object_utils_begin(axi_slv_seq_item)
     `uvm_field_int(awid, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(awaddr, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(awlen, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(awsize, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(awburst, UVM_ALL_ON | UVM_DEC)
-    // `uvm_field_int(awvalid, UVM_ALL_ON | UVM_DEC)
-    // `uvm_field_int(awready, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_enum(burst_t, awburst, UVM_ALL_ON)
+    //`uvm_field_int(awvalid, UVM_ALL_ON | UVM_DEC)
+    //`uvm_field_int(awready, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(wid, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_queue_int(wdata, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_queue_int(wstrb, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_queue_int(wdata, UVM_ALL_ON | UVM_HEX)
+    `uvm_field_queue_int(wstrb, UVM_ALL_ON | UVM_BIN)
     //`uvm_field_int(wlast, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(wvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(wready, UVM_ALL_ON | UVM_DEC)
@@ -68,12 +70,12 @@ class  axi_slv_seq_item extends uvm_sequence_item;
     `uvm_field_int(araddr, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(arlen, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(arsize, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(arburst, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_enum(burst_t, arburst, UVM_ALL_ON)
     //`uvm_field_int(arvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(arready, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(rid, UVM_ALL_ON | UVM_DEC)
     `uvm_field_queue_int(rdata, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(rresp, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_queue_int(rresp, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(rlast, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(rvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(rready, UVM_ALL_ON | UVM_DEC)

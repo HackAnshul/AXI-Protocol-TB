@@ -47,28 +47,34 @@ interface axi_slv_inf (input aclk, aresetn);
   //clocking block for slave driver
   clocking slv_drv_cb @(posedge aclk or negedge aresetn);
     default input #1 output #1;
-
-    input awready, wready, bid, bresp, bvalid, arready, rid, rdata, rresp, rlast, rvalid;
-
-    output awid, awaddr, awlen, awsize, awburst, awvalid;
-    output wid, wdata, wstrb, wlast, wvalid;
-    output bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
-
+    input awid, awaddr, awlen, awsize, awburst, awvalid;
+    input wid, wdata, wstrb, wlast, wvalid;
+    input arid, araddr, arlen, arsize, arburst, arvalid;
+    input bready, rready;
+    output awready, wready, bid, bresp, bvalid, arready;
+    output rid, rdata, rresp, rlast, rvalid;
   endclocking
 
   //clocking block for slave monitor
   clocking slv_mon_cb @(posedge aclk or negedge aresetn);
     default input #1 output #1;
-
     input awid, awaddr, awlen, awsize, awburst, awvalid;
     input wid, wdata, wstrb, wlast, wvalid;
-    input bready, arid, araddr, arlen, arsize, arburst, arvalid, rready;
-    input awready, wready, bid, bresp, bvalid, arready, rid, rdata, rresp, rlast, rvalid;
-
+    input bready, rready;
+    input arid, araddr, arlen, arsize, arburst, arvalid;
+    input awready, wready, bid, bresp, bvalid, arready;
+    input rid, rdata, rresp, rlast, rvalid;
   endclocking
 
   modport SLV_DRV_MP (clocking slv_drv_cb, input aclk, input aresetn);
   modport SLV_MON_MP (clocking slv_mon_cb, input aclk, input aresetn);
+
+  task wait_reset_assert();
+    wait (aresetn == 0);
+  endtask
+  task wait_reset_release();
+    wait (aresetn == 1);
+  endtask
 
 endinterface
 

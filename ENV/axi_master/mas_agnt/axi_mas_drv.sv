@@ -51,9 +51,6 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
         w_data_que.push_back(req);
         w_resp_que.push_back(req);
       end
-
-      //$cast(rsp,req.clone());
-      //rsp.set_id_info(req);
     end
   endtask
 
@@ -70,9 +67,10 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
       vif.mas_drv_cb.awaddr  <= item.awaddr;
       vif.mas_drv_cb.awlen   <= item.awlen;
       vif.mas_drv_cb.awsize  <= item.awsize;
-      vif.mas_drv_cb.awburst <= item.awburst;
+      vif.mas_drv_cb.awburst <= int'(item.awburst);
       while (vif.mas_drv_cb.awready == 1'b0) @(vif.mas_drv_cb);
-      if (w_addr_que.size == 0) vif.mas_drv_cb.awvalid <= 1'b0;
+      if (w_addr_que.size == 0)
+        @(vif.mas_drv_cb) vif.mas_drv_cb.awvalid <= 1'b0;
     end
   endtask
 
@@ -94,7 +92,7 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
           vif.mas_drv_cb.wlast <= 1'b0;
         while (vif.mas_drv_cb.wready == 1'b0) @(vif.mas_drv_cb);
         if (w_data_que.size == 0) begin
-          vif.mas_drv_cb.wvalid <= 1'b0;
+          @(vif.mas_drv_cb) vif.mas_drv_cb.wvalid <= 1'b0;
           phase.drop_objection(this);
         end
       end
@@ -117,9 +115,10 @@ class axi_mas_drv extends uvm_driver #(axi_mas_seq_item);
       vif.mas_drv_cb.araddr  <= item.araddr;
       vif.mas_drv_cb.arlen   <= item.arlen;
       vif.mas_drv_cb.arsize  <= item.arsize;
-      vif.mas_drv_cb.arburst <= item.arburst;
+      vif.mas_drv_cb.arburst <= int'(item.arburst);
       while (vif.mas_drv_cb.arready == 1'b0) @(vif.mas_drv_cb);
-      if (r_addr_que.size == 0) vif.mas_drv_cb.arvalid <= 1'b0;
+      if (r_addr_que.size == 0)
+        @(vif.mas_drv_cb) vif.mas_drv_cb.arvalid <= 1'b0;
     end
   endtask
 

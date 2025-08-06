@@ -45,6 +45,8 @@ class axi_slv_agent extends uvm_agent;
     if (slv_cfg.is_active == UVM_ACTIVE) begin
       slv_drv.vif = slv_cfg.vif;
       slv_drv.seq_item_port.connect(slv_seqr.seq_item_export);
+      slv_mon.w_item_collected_port.connect(slv_seqr.item_collected_export_w);
+      slv_mon.r_item_collected_port.connect(slv_seqr.item_collected_export_r);
     end
 
     slv_mon.vif = slv_cfg.vif;

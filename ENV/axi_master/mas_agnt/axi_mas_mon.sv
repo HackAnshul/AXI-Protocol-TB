@@ -12,8 +12,10 @@ class axi_mas_mon extends uvm_monitor;
   axi_mas_seq_item w_addr_que [$];
   axi_mas_seq_item w_data_que [$];
   axi_mas_seq_item r_addr_que [$];
-  axi_mas_seq_item r_data_que [$];
-  axi_mas_seq_item w_resp_que [$];
+  axi_mas_seq_item r_data_que [$]; // not using
+  axi_mas_seq_item w_resp_que [$]; // not using
+  axi_mas_seq_item w_resp_arr [int];
+  axi_mas_seq_item r_data_arr [int];
 
   //virtual interface
   virtual axi_mas_inf vif;
@@ -27,9 +29,6 @@ class axi_mas_mon extends uvm_monitor;
   uvm_analysis_port #(axi_mas_seq_item) w_item_collected_port;
   uvm_analysis_port #(axi_mas_seq_item) r_item_collected_port;
 
-  //seq_item handle, used as a place holder for sampling signal
-
-
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     w_item_collected_port = new("w_item_collected_port",this);
@@ -38,11 +37,10 @@ class axi_mas_mon extends uvm_monitor;
 
   //run_phase
   task run_phase(uvm_phase phase);
-
-    //sampling logic
+    //primary task which calls other tasks and
+    //combines the channels for write and read analysis ports
     monitor();
   endtask
-
 
   task w_addr_phase();
     axi_mas_seq_item item;
@@ -54,7 +52,7 @@ class axi_mas_mon extends uvm_monitor;
         item.awaddr  = vif.mas_mon_cb.awaddr;
         item.awlen   = vif.mas_mon_cb.awlen;
         item.awsize  = vif.mas_mon_cb.awsize;
-        item.awburst = vif.mas_mon_cb.awburst;
+        item.awburst = burst_t'(vif.mas_mon_cb.awburst);
         //
         w_addr_que.push_back(item);
       end
@@ -94,7 +92,7 @@ class axi_mas_mon extends uvm_monitor;
         item.araddr  = vif.mas_mon_cb.araddr;
         item.arlen   = vif.mas_mon_cb.arlen;
         item.arsize  = vif.mas_mon_cb.arsize;
-        item.arburst = vif.mas_mon_cb.arburst;
+        item.arburst = burst_t'(vif.mas_mon_cb.arburst);
         //
         r_addr_que.push_back(item);
       end
@@ -106,30 +104,28 @@ class axi_mas_mon extends uvm_monitor;
     forever begin
       item=new();
       do begin
-        @(vif.mas_mon_cb);
-        if (vif.mas_mon_cb.rvalid == 1 && vif.mas_mon_cb.rready == 1) begin
-          item.rresp.push_back(vif.mas_mon_cb.rresp);
-          item.rdata.push_back(vif.mas_mon_cb.rdata);
-          item.rid = vif.mas_mon_cb.rid;
-        end
+        @(vif.mas_mon_cb iff vif.mas_mon_cb.rvalid && vif.mas_mon_cb.rready);
+        item.rresp.push_back(vif.mas_mon_cb.rresp);
+        item.rdata.push_back(vif.mas_mon_cb.rdata);
+        item.rid = vif.mas_mon_cb.rid;
       end while (vif.mas_mon_cb.rlast == 1'b0);
       //
       if (vif.mas_mon_cb.rlast == 1'b1)
-        r_data_que.push_back(item);
+        //r_data_que.push_back(item);
+        r_data_arr[vif.mas_mon_cb.rid] = item;
     end
   endtask
 
   task w_resp_phase();
     axi_mas_seq_item item;
     forever begin
-      @(vif.mas_mon_cb);
-      if (vif.mas_mon_cb.bvalid == 1 && vif.mas_mon_cb.bready == 1) begin
-        item=new();
-        item.bid    = vif.mas_mon_cb.bid;
-        item.bresp  = vif.mas_mon_cb.bresp;
-        //
-        w_resp_que.push_back(item);
-      end
+      @(vif.mas_mon_cb iff vif.mas_mon_cb.bvalid && vif.mas_mon_cb.bready);
+      item = new();
+      item.bid    = vif.mas_mon_cb.bid;
+      item.bresp  = vif.mas_mon_cb.bresp;
+      //
+      w_resp_arr[vif.mas_mon_cb.bid] = item;
+      w_resp_que.push_back(item);
     end
   endtask
 
@@ -153,25 +149,30 @@ class axi_mas_mon extends uvm_monitor;
         temp_w = w_data_que.pop_front();
         item_w.wstrb = temp_w.wstrb;
         item_w.wdata = temp_w.wdata;
-        wait (w_resp_que.size != 0);
-        temp_w = w_resp_que.pop_front();
+        /*wait (w_resp_que.size != 0);
+        temp_w = w_resp_que.pop_front();*/
+        wait (w_resp_arr.exists(item_w.awid));
+        temp_w = w_resp_arr[item_w.awid];
+        w_resp_arr.delete(item_w.awid);
         item_w.bid   = temp_w.bid;
         item_w.bresp = temp_w.bresp;
         $cast(send_w,item_w.clone());
-        `uvm_info(get_name(),$sformatf("in write monitor\n%s",send_w.sprint()), UVM_LOW)
-
+        `uvm_info(get_name(),$sformatf("mas write monitor\n%s",send_w.sprint()), UVM_LOW)
         w_item_collected_port.write(send_w);
       end
       forever begin
         wait (r_addr_que.size != 0);
         item_r = r_addr_que.pop_front();
-        wait (r_data_que.size != 0);
-        temp_r = r_data_que.pop_front();
-        item_r.rdata = temp_w.rdata;
-        item_w.rid   = temp_w.rid;
-        item_r.rresp = temp_w.rresp;
+        /*wait (r_data_que.size != 0);
+        temp_r = r_data_que.pop_front();*/
+        wait (r_data_arr.exists(item_r.arid));
+        temp_r = r_data_arr[item_r.arid];
+        r_data_arr.delete(item_r.arid);
+        item_r.rdata = temp_r.rdata;
+        item_w.rid   = temp_r.rid;
+        item_r.rresp = temp_r.rresp;
         $cast(send_r,item_r.clone());
-        `uvm_info(get_name(),$sformatf("in read monitor\n%s",send_r.sprint()), UVM_LOW)
+        `uvm_info(get_name(),$sformatf("mas read monitor\n%s",send_r.sprint()), UVM_LOW)
         r_item_collected_port.write(send_r);
       end
     join

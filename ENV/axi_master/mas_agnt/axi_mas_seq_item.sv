@@ -2,7 +2,6 @@
 
 `ifndef AXI_MAS_SEQ_ITEM_SV
 `define AXI_MAS_SEQ_ITEM_SV
-typedef enum bit [1:0] {IDLE,READ,WRITE,RW} operation_t;
 
 //class  axi_mas_seq_item #(int ADDR_WIDTH = 32, DATA_WIDTH = 32, ID_W_WIDTH = 8, ID_R_WIDTH = 8) extends uvm_sequence_item;
 class  axi_mas_seq_item extends uvm_sequence_item;
@@ -12,7 +11,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   rand bit [`ADDR_WIDTH-1:0]awaddr;
   rand bit [7:0]awlen;
   rand bit [2:0]awsize;
-  rand bit [1:0]awburst;
+  rand burst_t awburst;
   //bit awvalid;
   //bit awready;
 
@@ -35,7 +34,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   rand bit [`ADDR_WIDTH-1:0]araddr;
   rand bit [7:0]arlen;
   rand bit [2:0]arsize;
-  rand bit [1:0]arburst;
+  rand burst_t arburst;
   //bit arvalid;
   //bit arready;
 
@@ -54,7 +53,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
     `uvm_field_int(awaddr, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(awlen, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(awsize, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(awburst, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_enum(burst_t, awburst, UVM_ALL_ON)
     //`uvm_field_int(awvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(awready, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(wid, UVM_ALL_ON | UVM_DEC)
@@ -71,7 +70,7 @@ class  axi_mas_seq_item extends uvm_sequence_item;
     `uvm_field_int(araddr, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(arlen, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(arsize, UVM_ALL_ON | UVM_DEC)
-    `uvm_field_int(arburst, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_enum(burst_t, arburst, UVM_ALL_ON)
     //`uvm_field_int(arvalid, UVM_ALL_ON | UVM_DEC)
     //`uvm_field_int(arready, UVM_ALL_ON | UVM_DEC)
     `uvm_field_int(rid, UVM_ALL_ON | UVM_DEC)
@@ -89,19 +88,22 @@ class  axi_mas_seq_item extends uvm_sequence_item;
   //CONSTRAINTS
   //to select which data to generate according to operation //implemented in driver
 
+  //burst type limit
+  constraint brst_typ {
+    awburst dist {FIXED:=10,INCR:=5,WRAP:=10};
+    arburst dist {FIXED:=10,INCR:=5,WRAP:=10};
+  }
+
   //for burst length according to axburst
   constraint brst_len_cnt {
-    awlen inside {[0:5]};
+    if (awburst == FIXED) awlen inside {[0:15]};
+    if (awburst == INCR)  awlen inside {[0:255]};
+    if (awburst == WRAP)  awlen inside {1,3,7,15};
+
+    if (arburst == FIXED) arlen inside {[0:15]};
+    if (arburst == INCR)  arlen inside {[0:255]};
+    if (arburst == WRAP)  arlen inside {1,3,7,15};
   }
-  //constraint brst_len_cnt {
-  //  if (awburst == 2'b00) awlen inside {[0:15]};
-  //  if (awburst == 2'b01) awlen inside {[0:255]};
-  //  if (awburst == 2'b10) awlen inside {[2,4,8,16]};
-  //
-  //  if (arburst == 2'b00) arlen inside {[0:15]};
-  //  if (arburst == 2'b01) arlen inside {[0:255]};
-  //  if (arburst == 2'b10) arlen inside {[2,4,8,16]};
-  //}
 
   //for wdata/rdata queue
   constraint queue_data {
